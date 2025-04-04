@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ApiPortalEtico.API\wwwroot\images\" />
     <Folder Include="ApiPortalEtico.Application\Templates\" />
   </ItemGroup>
 

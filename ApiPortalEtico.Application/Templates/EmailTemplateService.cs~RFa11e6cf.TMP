@@ -1,0 +1,370 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ApiPortalEtico.Domain.Entities;
+
+namespace ApiPortalEtico.Application.Emails.Templates
+{
+    public static class EmailTemplateService
+    {
+        private static IWebHostEnvironment _environment;
+
+        public static void Initialize(IWebHostEnvironment environment)
+        {
+            _environment = environment;
+        }
+
+        public static string GenerateIrregularityReportEmailTemplate(ApiPortalEtico.Domain.Entities.IrregularityReport report, string additionalMessage)
+        {
+            // Función auxiliar para manejar valores nulos o vacíos
+            string GetValueOrDash(string value)
+            {
+                return string.IsNullOrWhiteSpace(value) ? "-" : value;
+            }
+
+            // Colores corporativos - definidos como variables para facilitar su uso
+            string darkGreen = "#115740";
+            string lightGreen = "#7a9a01";
+            string lightGray = "#f8f9fa";
+            string borderColor = "#e9ecef";
+            string textColor = "#343a40";
+            string textMuted = "#6c757d";
+
+            // Preparar los valores para evitar problemas de interpolación
+            string tipoIrregularidad = GetValueOrDash(report.TipoIrregularidad);
+            string fechaIncidente = report.Fecha.ToString("dd/MM/yyyy");
+            string detalles = GetValueOrDash(report.Detalles);
+            string fechaCreacion = report.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss");
+
+            string pais = GetValueOrDash(report.Ubicacion?.Pais);
+            string provincia = GetValueOrDash(report.Ubicacion?.Provincia);
+            string ciudad = GetValueOrDash(report.Ubicacion?.Ciudad);
+            string sede = GetValueOrDash(report.Ubicacion?.Sede);
+
+            string evidenciaTipo = GetValueOrDash(report.Evidencia?.Tipo);
+            string evidenciaDondeObtener = GetValueOrDash(report.Evidencia?.DondeObtener);
+            string evidenciaEntregaFisica = GetValueOrDash(report.Evidencia?.EntregaFisica);
+
+            string beneficios = GetValueOrDash(report.Beneficios);
+            string testigos = GetValueOrDash(report.Testigos);
+            string conocimiento = GetValueOrDash(report.Conocimiento);
+            string involucraExternos = GetValueOrDash(report.InvolucraExternos);
+            string quienesExternos = GetValueOrDash(report.QuienesExternos);
+            string ocultado = GetValueOrDash(report.Ocultado);
+            string comoOcultado = GetValueOrDash(report.ComoOcultado);
+            string quienesOcultan = GetValueOrDash(report.QuienesOcultan);
+            string conocimientoPrevio = GetValueOrDash(report.ConocimientoPrevio);
+            string quienesConocen = GetValueOrDash(report.QuienesConocen);
+            string comoConocen = GetValueOrDash(report.ComoConocen);
+            string relacion = GetValueOrDash(report.Relacion);
+            string correoContacto = GetValueOrDash(report.CorreoContacto);
+            string relacionGrupo = GetValueOrDash(report.RelacionGrupo);
+            string anonimo = GetValueOrDash(report.Anonimo);
+
+            // Obtener la URL base para el logo
+            string logoPath = "cid:logo"; // Usamos Content-ID para imágenes embebidas
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Reporte de Irregularidad - Grupo Silvestre Ético</title>
+</head>
+<body style='margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; color: #343a40; line-height: 1.6; background-color: #f1f3f5;'>
+    <div style='max-width: 700px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);'>
+        <!-- HEADER -->
+        <div style='background: linear-gradient(135deg, #115740 0%, #115740 70%, #7a9a01 100%); padding: 30px; text-align: center; color: white; position: relative;'>
+            <div style='position: relative; z-index: 2;'>
+                <div style='margin-bottom: 15px;'>
+                    <img src='" + logoPath + @"' alt='Grupo Silvestre Ético' style='max-height: 70px; margin: 0 auto; display: block;'>
+                </div>
+                <h1 style='margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;'>Grupo Silvestre Ético</h1>
+                <p style='margin: 8px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;'>Sistema de reporte de irregularidades éticas</p>
+            </div>
+        </div>
+        
+        <!-- CONTENT -->
+        <div style='padding: 30px;'>
+            <!-- Message Box -->
+            <div style='background-color: #f8f9fa; border-left: 4px solid #7a9a01; padding: 20px; margin-bottom: 30px; border-radius: 6px;'>
+                <p style='margin-top: 0;'>Estimado(a) usuario,</p>
+                <p style='margin-bottom: 0;'>" + additionalMessage + @"</p>
+            </div>
+            
+            <!-- Reference Number -->
+            <div style='background: linear-gradient(135deg, #7a9a01 0%, #7a9a01 85%, #8aae0f 100%); color: white; padding: 20px; text-align: center; font-size: 18px; font-weight: 600; margin: 25px 0; border-radius: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'>
+                Número de Referencia: #" + report.Id + @"
+            </div>
+            
+            <!-- General Information Card -->
+            <div style='background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #e9ecef;'>
+                <div style='background-color: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef;'>
+                    <h2 style='color: #115740; font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center;'>
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='margin-right: 10px; width: 20px; height: 20px;'><circle cx='12' cy='12' r='10'></circle><line x1='12' y1='8' x2='12' y2='12'></line><line x1='12' y1='16' x2='12.01' y2='16'></line></svg>
+                        Información General
+                    </h2>
+                </div>
+                <div style='padding: 20px;'>
+                    <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;'>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Tipo de Irregularidad</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + tipoIrregularidad + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Fecha del Incidente</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + fechaIncidente + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Fecha de Creación</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + fechaCreacion + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Detalles</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + detalles + @"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Location Card -->
+            <div style='background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #e9ecef;'>
+                <div style='background-color: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef;'>
+                    <h2 style='color: #115740; font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center;'>
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='margin-right: 10px; width: 20px; height: 20px;'><path d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'></path><circle cx='12' cy='10' r='3'></circle></svg>
+                        Ubicación
+                    </h2>
+                </div>
+                <div style='padding: 20px;'>
+                    <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;'>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>País</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + pais + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Provincia</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + provincia + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Ciudad</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + ciudad + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Sede</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + sede + @"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- People Involved Card -->
+            <div style='background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #e9ecef;'>
+                <div style='background-color: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef;'>
+                    <h2 style='color: #115740; font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center;'>
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='margin-right: 10px; width: 20px; height: 20px;'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'></path><circle cx='9' cy='7' r='4'></circle><path d='M23 21v-2a4 4 0 0 0-3-3.87'></path><path d='M16 3.13a4 4 0 0 1 0 7.75'></path></svg>
+                        Personas Involucradas
+                    </h2>
+                </div>
+                <div style='padding: 20px;'>");
+
+            if (report.Involucrados != null && report.Involucrados.Count > 0)
+            {
+                sb.Append(@"
+                    <table style='width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #e9ecef; border-radius: 4px; overflow: hidden;'>
+                        <tr>
+                            <th style='background-color: #7a9a01; color: white; text-align: left; padding: 12px 15px; font-weight: 500; font-size: 14px;'>Nombre</th>
+                            <th style='background-color: #7a9a01; color: white; text-align: left; padding: 12px 15px; font-weight: 500; font-size: 14px;'>Apellido</th>
+                            <th style='background-color: #7a9a01; color: white; text-align: left; padding: 12px 15px; font-weight: 500; font-size: 14px;'>Relación</th>
+                            <th style='background-color: #7a9a01; color: white; text-align: left; padding: 12px 15px; font-weight: 500; font-size: 14px;'>Otro</th>
+                        </tr>");
+
+                int rowIndex = 0;
+                foreach (var involucrado in report.Involucrados)
+                {
+                    string rowStyle = rowIndex % 2 == 0 ? "" : "background-color: #f8f9fa;";
+                    sb.Append(@"
+                        <tr style='" + rowStyle + @"'>
+                            <td style='padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-size: 14px;'>" + GetValueOrDash(involucrado.Nombre) + @"</td>
+                            <td style='padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-size: 14px;'>" + GetValueOrDash(involucrado.Apellido) + @"</td>
+                            <td style='padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-size: 14px;'>" + GetValueOrDash(involucrado.Relacion) + @"</td>
+                            <td style='padding: 12px 15px; border-bottom: 1px solid #e9ecef; font-size: 14px;'>" + GetValueOrDash(involucrado.Otro) + @"</td>
+                        </tr>");
+                    rowIndex++;
+                }
+
+                sb.Append(@"
+                    </table>");
+            }
+            else
+            {
+                sb.Append(@"
+                    <p>No se han especificado personas involucradas.</p>");
+            }
+
+            sb.Append(@"
+                </div>
+            </div>
+            
+            <!-- Evidence Card -->
+            <div style='background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #e9ecef;'>
+                <div style='background-color: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef;'>
+                    <h2 style='color: #115740; font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center;'>
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='margin-right: 10px; width: 20px; height: 20px;'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>
+                        Evidencia
+                    </h2>
+                </div>
+                <div style='padding: 20px;'>
+                    <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;'>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Tipo</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + evidenciaTipo + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Dónde Obtener</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + evidenciaDondeObtener + @"</div>
+                        </div>");
+
+            if (!string.IsNullOrEmpty(report.Evidencia?.EntregaFisica))
+            {
+                sb.Append(@"
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Entrega Física</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + evidenciaEntregaFisica + @"</div>
+                        </div>");
+            }
+
+            sb.Append(@"
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Information Card -->
+            <div style='background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #e9ecef;'>
+                <div style='background-color: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #e9ecef;'>
+                    <h2 style='color: #115740; font-size: 18px; margin: 0; font-weight: 600; display: flex; align-items: center;'>
+                        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' style='margin-right: 10px; width: 20px; height: 20px;'><circle cx='12' cy='12' r='10'></circle><path d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'></path><line x1='12' y1='17' x2='12.01' y2='17'></line></svg>
+                        Información Adicional
+                    </h2>
+                </div>
+                <div style='padding: 20px;'>
+                    <div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;'>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Beneficios</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + beneficios + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Testigos</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + testigos + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Conocimiento</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + conocimiento + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Involucra a Externos?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + involucraExternos + @"</div>
+                        </div>");
+
+            if (report.InvolucraExternos == "si" && !string.IsNullOrEmpty(report.QuienesExternos))
+            {
+                sb.Append(@"
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Quiénes Externos?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + quienesExternos + @"</div>
+                        </div>");
+            }
+
+            sb.Append(@"
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Ha sido ocultado?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + ocultado + @"</div>
+                        </div>");
+
+            if (report.Ocultado == "si")
+            {
+                if (!string.IsNullOrEmpty(report.ComoOcultado))
+                {
+                    sb.Append(@"
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Cómo ha sido ocultado?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + comoOcultado + @"</div>
+                        </div>");
+                }
+
+                if (!string.IsNullOrEmpty(report.QuienesOcultan))
+                {
+                    sb.Append(@"
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Quiénes lo ocultan?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + quienesOcultan + @"</div>
+                        </div>");
+                }
+            }
+
+            sb.Append(@"
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Conocimiento previo?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + conocimientoPrevio + @"</div>
+                        </div>");
+
+            if (report.ConocimientoPrevio == "si")
+            {
+                if (!string.IsNullOrEmpty(report.QuienesConocen))
+                {
+                    sb.Append(@"
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Quiénes conocen?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + quienesConocen + @"</div>
+                        </div>");
+                }
+
+                if (!string.IsNullOrEmpty(report.ComoConocen))
+                {
+                    sb.Append(@"
+                        <div style='margin-bottom: 15px; grid-column: 1 / -1;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Cómo conocen?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + comoConocen + @"</div>
+                        </div>");
+                }
+            }
+
+            sb.Append(@"
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Relación</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + relacion + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Correo de Contacto</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + correoContacto + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>Relación con el Grupo</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + relacionGrupo + @"</div>
+                        </div>
+                        <div style='margin-bottom: 15px;'>
+                            <div style='font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;'>¿Reporte Anónimo?</div>
+                            <div style='font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;'>" + anonimo + @"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FOOTER -->
+        <div style='background: linear-gradient(135deg, #115740 0%, #115740 70%, #7a9a01 100%); color: white; padding: 25px 30px; text-align: center; font-size: 14px; position: relative;'>
+            <p style='margin: 8px 0; opacity: 0.9;'>© " + DateTime.Now.Year + @" Grupo Silvestre Ético. Todos los derechos reservados.</p>
+            <p style='margin: 8px 0; opacity: 0.9;'>Este correo es confidencial y contiene información sensible. Por favor no lo reenvíe.</p>
+            <p style='margin: 8px 0; opacity: 0.9;'>Para más información, contacte a: <a href='mailto:reportes@gruposilvestretico.com' style='color: white; text-decoration: underline;'>reportes@gruposilvestretico.com</a></p>
+        </div>
+    </div>
+</body>
+</html>");
+
+            return sb.ToString();
+        }
+    }
+}
+

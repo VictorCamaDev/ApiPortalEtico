@@ -6,11 +6,27 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System;
+using System.IO;
 using ApiPortalEtico.API.Middleware;
 using ApiPortalEtico.Infrastructure;
 using ApiPortalEtico.Application;
+using ApiPortalEtico.Application.Emails.Templates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Asegurarse de que la carpeta wwwroot existe
+string wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+
+    // Crear la carpeta de imágenes si no existe
+    string imagesPath = Path.Combine(wwwrootPath, "images");
+    if (!Directory.Exists(imagesPath))
+    {
+        Directory.CreateDirectory(imagesPath);
+    }
+}
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -30,7 +46,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("ApiPortalEtico.Infrastructure")));
+        b => b.MigrationsAssembly("CleanArchitecture.Infrastructure")));
 
 // Register application services
 builder.Services.AddApplicationServices();
@@ -39,20 +55,24 @@ builder.Services.AddInfrastructureServices(builder.Configuration);
 // Add Swagger
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Portal Etico API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Clean Architecture API", Version = "v1" });
 });
 
 var app = builder.Build();
+
+// Initialize EmailTemplateService with WebHostEnvironment
+EmailTemplateService.Initialize(app.Environment);
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Portal Ético API v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Clean Architecture API v1"));
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Importante: Habilita el acceso a archivos estáticos
 app.UseRouting();
 app.UseCors("AllowReactApp");
 
