@@ -1,0 +1,51 @@
+using System.Threading;
+using System.Threading.Tasks;
+using ApiPortalEtico.Application.Common.Interfaces;
+using MediatR;
+using System.Collections.Generic;
+using ApiPortalEtico.Application.Emails.Commands;
+
+namespace ApiPortalEtico.Application.IrregularityReports.Events
+{
+    public class IrregularityReportCreatedEvent : INotification
+    {
+        public int IrregularityReportId { get; set; }
+    }
+
+    public class IrregularityReportCreatedEventHandler : INotificationHandler<IrregularityReportCreatedEvent>
+    {
+        private readonly IMediator _mediator;
+        private readonly IApplicationDbContext _context;
+
+        public IrregularityReportCreatedEventHandler(IMediator mediator, IApplicationDbContext context)
+        {
+            _mediator = mediator;
+            _context = context;
+        }
+
+        public async Task Handle(IrregularityReportCreatedEvent notification, CancellationToken cancellationToken)
+        {
+            // Get the report to access the customer's email
+            var report = await _context.IrregularityReports
+                .FindAsync(new object[] { notification.IrregularityReportId }, cancellationToken);
+
+            if (report == null || string.IsNullOrEmpty(report.CorreoContacto))
+            {
+                // No email to send to or report not found
+                return;
+            }
+
+            // Create email command
+            var emailCommand = new SendIrregularityReportEmailCommand
+            {
+                IrregularityReportId = notification.IrregularityReportId,
+                Recipients = new List<string> { report.CorreoContacto },
+                AdditionalMessage = "Gracias por su reporte. A continuación encontrará una copia de la información que ha proporcionado."
+            };
+
+            // Send email
+           await _mediator.Send(emailCommand, cancellationToken);
+        }
+    }
+}
+

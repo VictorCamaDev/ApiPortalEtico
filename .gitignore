@@ -1,0 +1,5 @@
+# Ignorar archivos y carpetas generadas por Visual Studio
+.vs/
+.vscode/
+bin/
+obj/
