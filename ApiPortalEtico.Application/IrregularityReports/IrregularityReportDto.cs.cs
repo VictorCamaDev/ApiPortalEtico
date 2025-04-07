@@ -24,9 +24,25 @@ namespace ApiPortalEtico.Application.IrregularityReports
         public string QuienesConocen { get; set; }
         public string ComoConocen { get; set; }
         public string Relacion { get; set; }
-        public string CorreoContacto { get; set; }
+
+        // Correo para reportes anónimos
+        public string? CorreoContacto { get; set; }
+
+        // Correo para reportes no anónimos
+        public string? Correo { get; set; }
+
         public string RelacionGrupo { get; set; }
         public string Anonimo { get; set; }
+
+        // Campos adicionales
+        public string NombreCompleto { get; set; }
+        public string Telefono { get; set; }
+        public string OtroContacto { get; set; }
+        public string Cargo { get; set; }
+        public string Area { get; set; }
+        public string AreaOtro { get; set; }
+        public bool AceptaTerminos { get; set; }
+
         public DateTime CreatedAt { get; set; }
     }
 
@@ -51,7 +67,7 @@ namespace ApiPortalEtico.Application.IrregularityReports
     {
         public string Tipo { get; set; }
         public string DondeObtener { get; set; }
-        public string? EntregaFisica { get; set; }
+        public string EntregaFisica { get; set; }
     }
 }
 

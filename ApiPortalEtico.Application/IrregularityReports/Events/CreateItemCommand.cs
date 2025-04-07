@@ -10,6 +10,7 @@ namespace ApiPortalEtico.Application.IrregularityReports.Events
     public class IrregularityReportCreatedEvent : INotification
     {
         public int IrregularityReportId { get; set; }
+        public string EmailToUse { get; set; }
     }
 
     public class IrregularityReportCreatedEventHandler : INotificationHandler<IrregularityReportCreatedEvent>
@@ -25,26 +26,23 @@ namespace ApiPortalEtico.Application.IrregularityReports.Events
 
         public async Task Handle(IrregularityReportCreatedEvent notification, CancellationToken cancellationToken)
         {
-            // Get the report to access the customer's email
-            var report = await _context.IrregularityReports
-                .FindAsync(new object[] { notification.IrregularityReportId }, cancellationToken);
-
-            if (report == null || string.IsNullOrEmpty(report.CorreoContacto))
+            // Verificar que tenemos un correo al que enviar
+            if (string.IsNullOrEmpty(notification.EmailToUse))
             {
-                // No email to send to or report not found
+                // No hay correo para enviar
                 return;
             }
 
-            // Create email command
+            // Crear comando de correo
             var emailCommand = new SendIrregularityReportEmailCommand
             {
                 IrregularityReportId = notification.IrregularityReportId,
-                Recipients = new List<string> { report.CorreoContacto },
+                Recipients = new List<string> { notification.EmailToUse },
                 AdditionalMessage = "Gracias por su reporte. A continuación encontrará una copia de la información que ha proporcionado."
             };
 
-            // Send email
-           await _mediator.Send(emailCommand, cancellationToken);
+            // Enviar correo
+            await _mediator.Send(emailCommand, cancellationToken);
         }
     }
 }

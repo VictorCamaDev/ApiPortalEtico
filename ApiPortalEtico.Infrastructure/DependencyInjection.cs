@@ -1,6 +1,5 @@
 using ApiPortalEtico.Application.Common.Interfaces;
 using ApiPortalEtico.Infrastructure;
-using ApiPortalEtico.Application.Common.Interfaces;
 using ApiPortalEtico.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

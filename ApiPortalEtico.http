@@ -1,6 +1,6 @@
-@ApiPortalEtico_HostAddress = http://localhost:5032
+@ApiPortalEtico_HostAddress = https://localhost:7006
 
-GET {{ApiPortalEtico_HostAddress}}/weatherforecast/
+POST {{ApiPortalEtico_HostAddress}}/api/IrregularityReports
 Accept: application/json
 
 ###

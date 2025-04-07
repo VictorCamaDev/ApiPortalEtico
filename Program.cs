@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("CleanArchitecture.Infrastructure")));
+        b => b.MigrationsAssembly("ApiPortalEtico.Infrastructure")));
 
 // Register application services
 builder.Services.AddApplicationServices();

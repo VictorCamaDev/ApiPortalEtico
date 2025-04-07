@@ -22,17 +22,32 @@ namespace ApiPortalEtico.Application.IrregularityReports.Commands
         public string Testigos { get; set; }
         public string Conocimiento { get; set; }
         public string InvolucraExternos { get; set; }
-        public string? QuienesExternos { get; set; }
+        public string QuienesExternos { get; set; }
         public string Ocultado { get; set; }
-        public string? ComoOcultado { get; set; }
-        public string? QuienesOcultan { get; set; }
+        public string ComoOcultado { get; set; }
+        public string QuienesOcultan { get; set; }
         public string ConocimientoPrevio { get; set; }
-        public string? QuienesConocen { get; set; }
-        public string? ComoConocen { get; set; }
+        public string QuienesConocen { get; set; }
+        public string ComoConocen { get; set; }
         public string Relacion { get; set; }
-        public string CorreoContacto { get; set; }
+
+        // Correo para reportes anónimos
+        public string? CorreoContacto { get; set; }
+
+        // Correo para reportes no anónimos
+        public string? Correo { get; set; }
+
         public string RelacionGrupo { get; set; }
         public string Anonimo { get; set; }
+
+        // Campos adicionales
+        public string NombreCompleto { get; set; }
+        public string Telefono { get; set; }
+        public string OtroContacto { get; set; }
+        public string Cargo { get; set; }
+        public string Area { get; set; }
+        public string AreaOtro { get; set; }
+        public bool AceptaTerminos { get; set; }
     }
 
     public class CreateIrregularityReportCommandHandler : IRequestHandler<CreateIrregularityReportCommand, IrregularityReportDto>
@@ -66,8 +81,19 @@ namespace ApiPortalEtico.Application.IrregularityReports.Commands
                 ComoConocen = request.ComoConocen,
                 Relacion = request.Relacion,
                 CorreoContacto = request.CorreoContacto,
+                Correo = request.Correo,
                 RelacionGrupo = request.RelacionGrupo,
                 Anonimo = request.Anonimo,
+
+                // Campos adicionales
+                NombreCompleto = request.NombreCompleto,
+                Telefono = request.Telefono,
+                OtroContacto = request.OtroContacto,
+                Cargo = request.Cargo,
+                Area = request.Area,
+                AreaOtro = request.AreaOtro,
+                AceptaTerminos = request.AceptaTerminos,
+
                 CreatedAt = DateTime.UtcNow,
                 Ubicacion = new Ubicacion
                 {
@@ -98,11 +124,29 @@ namespace ApiPortalEtico.Application.IrregularityReports.Commands
             _context.IrregularityReports.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Only send confirmation email if the customer provided an email address
-            if (!string.IsNullOrEmpty(entity.CorreoContacto))
+            // Determinar qué correo usar para enviar la confirmación
+            string emailToUse = null;
+
+            if (entity.Anonimo?.ToLower() == "si" || entity.Anonimo?.ToLower() == "sí")
+            {
+                // Si es anónimo, usar el correo de contacto
+                emailToUse = entity.CorreoContacto;
+            }
+            else
+            {
+                // Si no es anónimo, usar el correo principal
+                emailToUse = entity.Correo;
+            }
+
+            // Enviar correo de confirmación si hay un correo disponible
+            if (!string.IsNullOrEmpty(emailToUse))
             {
                 // Publish event that a new irregularity report was created
-                await _mediator.Publish(new IrregularityReportCreatedEvent { IrregularityReportId = entity.Id }, cancellationToken);
+                await _mediator.Publish(new IrregularityReportCreatedEvent
+                {
+                    IrregularityReportId = entity.Id,
+                    EmailToUse = emailToUse
+                }, cancellationToken);
             }
 
             // Map back to DTO
@@ -125,8 +169,19 @@ namespace ApiPortalEtico.Application.IrregularityReports.Commands
                 ComoConocen = entity.ComoConocen,
                 Relacion = entity.Relacion,
                 CorreoContacto = entity.CorreoContacto,
+                Correo = entity.Correo,
                 RelacionGrupo = entity.RelacionGrupo,
                 Anonimo = entity.Anonimo,
+
+                // Campos adicionales
+                NombreCompleto = entity.NombreCompleto,
+                Telefono = entity.Telefono,
+                OtroContacto = entity.OtroContacto,
+                Cargo = entity.Cargo,
+                Area = entity.Area,
+                AreaOtro = entity.AreaOtro,
+                AceptaTerminos = entity.AceptaTerminos,
+
                 CreatedAt = entity.CreatedAt,
                 Ubicacion = new UbicacionDto
                 {

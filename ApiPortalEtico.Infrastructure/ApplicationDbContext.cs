@@ -1,8 +1,6 @@
 using ApiPortalEtico.Application.Common.Interfaces;
 using ApiPortalEtico.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +31,19 @@ namespace ApiPortalEtico.Infrastructure
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.TipoIrregularidad).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Detalles).HasMaxLength(2000);
+
+                // Configuración para los campos de correo
+                entity.Property(e => e.CorreoContacto).HasMaxLength(200);
+                entity.Property(e => e.Correo).HasMaxLength(200);
+
+                // Configuración para los campos adicionales
+                entity.Property(e => e.NombreCompleto).HasMaxLength(200);
+                entity.Property(e => e.Telefono).HasMaxLength(50);
+                entity.Property(e => e.OtroContacto).HasMaxLength(100);
+                entity.Property(e => e.Cargo).HasMaxLength(100);
+                entity.Property(e => e.Area).HasMaxLength(100);
+                entity.Property(e => e.AreaOtro).HasMaxLength(100);
+                entity.Property(e => e.AceptaTerminos).HasDefaultValue(false);
 
                 entity.HasOne(e => e.Ubicacion)
                     .WithOne(u => u.IrregularityReport)

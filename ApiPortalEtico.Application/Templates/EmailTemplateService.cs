@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ApiPortalEtico.Domain.Entities;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ApiPortalEtico.Application.Emails.Templates
 {
@@ -56,9 +58,22 @@ namespace ApiPortalEtico.Application.Emails.Templates
             string quienesConocen = GetValueOrDash(report.QuienesConocen);
             string comoConocen = GetValueOrDash(report.ComoConocen);
             string relacion = GetValueOrDash(report.Relacion);
-            string correoContacto = GetValueOrDash(report.CorreoContacto);
+
+            // Determinar qué correo mostrar según si es anónimo o no
+            string correoMostrar = report.Anonimo?.ToLower() == "si" || report.Anonimo?.ToLower() == "sí"
+                ? GetValueOrDash(report.CorreoContacto)
+                : GetValueOrDash(report.Correo);
+
             string relacionGrupo = GetValueOrDash(report.RelacionGrupo);
             string anonimo = GetValueOrDash(report.Anonimo);
+
+            // Nuevos campos
+            string nombreCompleto = GetValueOrDash(report.NombreCompleto);
+            string telefono = GetValueOrDash(report.Telefono);
+            string otroContacto = GetValueOrDash(report.OtroContacto);
+            string cargo = GetValueOrDash(report.Cargo);
+            string area = GetValueOrDash(report.Area);
+            string areaOtro = GetValueOrDash(report.AreaOtro);
 
             // Obtener la URL base para el logo
             string logoPath = "cid:logo"; // Usamos Content-ID para imágenes embebidas
@@ -84,7 +99,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                 <tr>
                                     <td align=""center"" style=""padding-bottom: 15px;"">
-                                        <img src=""" + logoPath + @""" alt=""Grupo Silvestre Ético"" style=""max-height: 70px; display: block;"" />
+                                        <img src="""""" + logoPath + @"""""" alt=""""Grupo Silvestre Ético"""" style=""""max-height: 70px; display: block;"""" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -123,11 +138,68 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                 </tr>
                             </table>
                             
+                            <!-- Información del Reportante -->
+                            <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
+                                <tr>
+                                    <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
+                                            Información del Reportante
+                                        </h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style=""padding: 20px;"">
+                                        <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
+                                            <tr>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Nombre Completo</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + nombreCompleto + @"</div>
+                                                </td>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Teléfono</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + telefono + @"</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Correo Electrónico</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + correoMostrar + @"</div>
+                                                </td>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Otro Contacto</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + otroContacto + @"</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Cargo</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + cargo + @"</div>
+                                                </td>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Área</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + area + (string.IsNullOrEmpty(areaOtro) ? "" : " - " + areaOtro) + @"</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Reporte Anónimo</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + anonimo + @"</div>
+                                                </td>
+                                                <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Relación con el Grupo</div>
+                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + relacionGrupo + @"</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
                             <!-- General Information Card -->
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
                                 <tr>
                                     <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
-                                        <h2 style=""color: " + darkGreen + @"; font-size: 18px; margin: 0; font-weight: 600;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
                                             Información General
                                         </h2>
                                     </td>
@@ -137,17 +209,17 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Tipo de Irregularidad</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Tipo de Irregularidad</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + tipoIrregularidad + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Fecha del Incidente</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Fecha del Incidente</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + fechaIncidente + @"</div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Fecha de Creación</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Fecha de Creación</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + fechaCreacion + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -155,7 +227,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                             </tr>
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Detalles</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Detalles</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + detalles + @"</div>
                                                 </td>
                                             </tr>
@@ -168,7 +240,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
                                 <tr>
                                     <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
-                                        <h2 style=""color: " + darkGreen + @"; font-size: 18px; margin: 0; font-weight: 600;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
                                             Ubicación
                                         </h2>
                                     </td>
@@ -178,21 +250,21 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">País</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">País</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + pais + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Provincia</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Provincia</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + provincia + @"</div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Ciudad</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Ciudad</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + ciudad + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Sede</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Sede</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + sede + @"</div>
                                                 </td>
                                             </tr>
@@ -205,7 +277,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
                                 <tr>
                                     <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
-                                        <h2 style=""color: " + darkGreen + @"; font-size: 18px; margin: 0; font-weight: 600;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
                                             Personas Involucradas
                                         </h2>
                                     </td>
@@ -256,7 +328,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
                                 <tr>
                                     <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
-                                        <h2 style=""color: " + darkGreen + @"; font-size: 18px; margin: 0; font-weight: 600;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
                                             Evidencia
                                         </h2>
                                     </td>
@@ -266,7 +338,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Tipo</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Tipo</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + evidenciaTipo + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">");
@@ -274,7 +346,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             if (!string.IsNullOrEmpty(report.Evidencia?.EntregaFisica))
             {
                 sb.Append(@"
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Entrega Física</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Entrega Física</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + evidenciaEntregaFisica + @"</div>");
             }
 
@@ -283,7 +355,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                             </tr>
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Dónde Obtener</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Dónde Obtener</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + evidenciaDondeObtener + @"</div>
                                                 </td>
                                             </tr>
@@ -296,7 +368,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                             <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"" style=""margin-bottom: 25px; border: 1px solid #e9ecef; border-radius: 8px;"">
                                 <tr>
                                     <td bgcolor=""#f8f9fa"" style=""padding: 15px 20px; border-bottom: 1px solid #e9ecef;"">
-                                        <h2 style=""color: " + darkGreen + @"; font-size: 18px; margin: 0; font-weight: 600;"">
+                                        <h2 style=""color: #115740; font-size: 18px; margin: 0; font-weight: 600;"">
                                             Información Adicional
                                         </h2>
                                     </td>
@@ -306,21 +378,21 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Beneficios</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Beneficios</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + beneficios + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Testigos</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Testigos</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + testigos + @"</div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Conocimiento</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Conocimiento</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + conocimiento + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Involucra a Externos?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Involucra a Externos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + involucraExternos + @"</div>
                                                 </td>
                                             </tr>");
@@ -330,7 +402,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                 sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Quiénes Externos?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes Externos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesExternos + @"</div>
                                                 </td>
                                             </tr>");
@@ -339,7 +411,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Ha sido ocultado?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Ha sido ocultado?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + ocultado + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -353,7 +425,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Cómo ha sido ocultado?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cómo ha sido ocultado?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + comoOcultado + @"</div>
                                                 </td>
                                             </tr>");
@@ -364,7 +436,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Quiénes lo ocultan?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes lo ocultan?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesOcultan + @"</div>
                                                 </td>
                                             </tr>");
@@ -374,7 +446,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Conocimiento previo?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Conocimiento previo?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + conocimientoPrevio + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -388,7 +460,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Quiénes conocen?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes conocen?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesConocen + @"</div>
                                                 </td>
                                             </tr>");
@@ -399,7 +471,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Cómo conocen?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cómo conocen?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + comoConocen + @"</div>
                                                 </td>
                                             </tr>");
@@ -409,22 +481,10 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Relación</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Relación</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + relacion + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Correo de Contacto</div>
-                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + correoContacto + @"</div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">Relación con el Grupo</div>
-                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + relacionGrupo + @"</div>
-                                                </td>
-                                                <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: " + darkGreen + @"; font-size: 14px; margin-bottom: 5px;"">¿Reporte Anónimo?</div>
-                                                    <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + anonimo + @"</div>
                                                 </td>
                                             </tr>
                                         </table>
