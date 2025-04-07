@@ -23,11 +23,13 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.70.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-	<Content Include="wwwroot\**\*" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <!-- ✅ Incluir todos los archivos de wwwroot en el despliegue -->
   <ItemGroup>
-    <Folder Include="ApiPortalEtico.API\wwwroot\images\" />
-    <Folder Include="ApiPortalEtico.Application\Templates\" />
+    <Content Include="wwwroot\**\*">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
