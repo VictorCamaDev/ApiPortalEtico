@@ -209,7 +209,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Tipo de Irregularidad</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Seleccione el tipo de irregularidad que desea reportar</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + tipoIrregularidad + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -227,7 +227,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                             </tr>
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Detalles</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Describa con el mayor detalle posible los hechos irregulares</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + detalles + @"</div>
                                                 </td>
                                             </tr>
@@ -355,7 +355,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                             </tr>
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Dónde Obtener</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Dónde se puede obtener la evidencia?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + evidenciaDondeObtener + @"</div>
                                                 </td>
                                             </tr>
@@ -378,11 +378,11 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                         <table border=""0"" cellpadding=""0"" cellspacing=""0"" width=""100%"">
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Beneficios</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué tipos de beneficios reciben las personas involucradas en la irregularidad?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + beneficios + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Testigos</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué testigos considera que podrían contribuir con mayor evidencia de esta irregularidad?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + testigos + @"</div>
                                                 </td>
                                             </tr>
@@ -392,7 +392,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + conocimiento + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Involucra a Externos?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Este incidente involucra a personas externas al grupo?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + involucraExternos + @"</div>
                                                 </td>
                                             </tr>");
@@ -402,7 +402,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                 sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes Externos?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué personas externas al grupo están involucradas?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesExternos + @"</div>
                                                 </td>
                                             </tr>");
@@ -411,7 +411,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Ha sido ocultado?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cree usted que estos hechos están siendo ocultados de alguna manera?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + ocultado + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -425,7 +425,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cómo ha sido ocultado?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿De qué manera se están ocultando estos hechos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + comoOcultado + @"</div>
                                                 </td>
                                             </tr>");
@@ -436,7 +436,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes lo ocultan?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué personas están ocultando estos hechos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesOcultan + @"</div>
                                                 </td>
                                             </tr>");
@@ -446,7 +446,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Conocimiento previo?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Alguna dirección, gerencia, subgerencia o jefatura conoce de estos hechos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + conocimientoPrevio + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
@@ -460,7 +460,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Quiénes conocen?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué direcciones, gerencias, subgerencias o jefaturas conocen estos hechos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + quienesConocen + @"</div>
                                                 </td>
                                             </tr>");
@@ -471,7 +471,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
                     sb.Append(@"
                                             <tr>
                                                 <td colspan=""2"" style=""padding-bottom: 15px;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cómo conocen?</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Cómo se enteraron de estos hechos?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + comoConocen + @"</div>
                                                 </td>
                                             </tr>");
@@ -481,7 +481,7 @@ namespace ApiPortalEtico.Application.Emails.Templates
             sb.Append(@"
                                             <tr>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-right: 10px; vertical-align: top;"">
-                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">Relación</div>
+                                                    <div style=""font-weight: 500; color: #115740; font-size: 14px; margin-bottom: 5px;"">¿Qué tipo de relación existe entre las personas involucradas?</div>
                                                     <div style=""font-size: 15px; padding: 8px 12px; background-color: #f8f9fa; border-radius: 4px; border: 1px solid #e9ecef;"">" + relacion + @"</div>
                                                 </td>
                                                 <td width=""50%"" style=""padding-bottom: 15px; padding-left: 10px; vertical-align: top;"">
