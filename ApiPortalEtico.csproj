@@ -24,12 +24,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
-
-  <!-- ✅ Incluir todos los archivos de wwwroot en el despliegue -->
   <ItemGroup>
-    <Content Include="wwwroot\**\*">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Folder Include="ApiPortalEtico.API\wwwroot\images\" />
+    <Folder Include="ApiPortalEtico.Application\Templates\" />
   </ItemGroup>
 
 </Project>
