@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+Ôªøusing Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,7 @@ if (!Directory.Exists(wwwrootPath))
 {
     Directory.CreateDirectory(wwwrootPath);
 
-    // Crear la carpeta de im·genes si no existe
+    // Crear la carpeta de im√°genes si no existe
     string imagesPath = Path.Combine(wwwrootPath, "images");
     if (!Directory.Exists(imagesPath))
     {
@@ -60,6 +60,22 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate(); // Crea BD y aplica migraciones
+        Console.WriteLine("Base de datos actualizada exitosamente.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al aplicar migraciones:");
+        Console.WriteLine(ex.Message);
+    }
+}
+
 // Initialize EmailTemplateService with WebHostEnvironment
 EmailTemplateService.Initialize(app.Environment);
 
@@ -72,7 +88,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // Importante: Habilita el acceso a archivos est·ticos
+app.UseStaticFiles(); // Importante: Habilita el acceso a archivos est√°ticos
 app.UseRouting();
 app.UseCors("AllowReactApp");
 

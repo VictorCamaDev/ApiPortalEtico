@@ -44,8 +44,8 @@ namespace ApiPortalEtico.Infrastructure.Services
                 {
                     message.CC.Add(new MailAddress(recipient.Address, recipient.Name));
                 }
-                message.CC.Add(new MailAddress("jorge.enrique@gruposilvestre.com.pe", "Jorge Enrique"));
-                message.CC.Add(new MailAddress("july.carpio@gruposilvestre.com.pe", "July Carpio"));
+                //message.CC.Add(new MailAddress("jorge.enrique@gruposilvestre.com.pe", "Jorge Enrique"));
+                //message.CC.Add(new MailAddress("july.carpio@gruposilvestre.com.pe", "July Carpio"));
 
                 // Add BCC recipients
                 foreach (var recipient in emailMessage.Bcc)
